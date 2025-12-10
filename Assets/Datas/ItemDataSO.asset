@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5710de089815d764bb619e3ef53b03a6, type: 3}
+  m_Name: ItemDataSO
+  m_EditorClassIdentifier: 
+  listItem:
+  - type: 0
+    itemName: Arrow
+    icon: {fileID: 21300000, guid: 7729921343b6b5d4893e195ec102c5dc, type: 3}
+    price: 10
+    cooldown: 0
+    maxLevel: 3
+  - type: 1
+    itemName: Bullet
+    icon: {fileID: 21300000, guid: bef86a2087116a94f81932505a88621a, type: 3}
+    price: 22
+    cooldown: 0
+    maxLevel: 3
+  - type: 2
+    itemName: Dash
+    icon: {fileID: 21300000, guid: 43ba2fac304fd1b4e8b570aaa00b4564, type: 3}
+    price: 11
+    cooldown: 2
+    maxLevel: 1
+  - type: 3
+    itemName: Speed Boost
+    icon: {fileID: 21300000, guid: aeeb8777344322e4cb6e88f5b052b109, type: 3}
+    price: 13
+    cooldown: 10
+    maxLevel: 3
+  - type: 4
+    itemName: Health
+    icon: {fileID: 21300000, guid: 011bf2f7ec7197043ac8435820f9c61e, type: 3}
+    price: 10
+    cooldown: 0
+    maxLevel: 3
