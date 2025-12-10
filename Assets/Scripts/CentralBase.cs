@@ -47,9 +47,25 @@ public class CentralBase : MonoBehaviour, IHealth
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth); // không vượt quá max
         healthBar.UpdateHealth();
     }
+    public void ResetBase()
+    {
+        // Đặt lại máu về max
+        currentHealth = maxHealth;
+
+        // Bật lại thanh máu nếu nó bị ẩn
+        if (healthBar != null)
+        {
+            healthBar.gameObject.SetActive(true);
+            healthBar.Init(this);       // khởi tạo lại liên kết
+            healthBar.UpdateHealth();   // cập nhật hiển thị máu
+        }
+
+        // Nếu có thêm logic reset khác (ví dụ animation, trạng thái base), thêm ở đây
+        Debug.Log("Central Base reset to full health.");
+    }
     private void Die()
     {
         Debug.Log("Central Base destroyed!");
-        // Thêm hiệu ứng nổ, kết thúc game, v.v.
+        GameManager.Instance.ShowResult(false);
     }
 }

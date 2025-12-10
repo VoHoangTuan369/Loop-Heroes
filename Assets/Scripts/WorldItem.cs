@@ -49,11 +49,13 @@ public class WorldItem : MonoBehaviour
             Quaternion rotation = Quaternion.LookRotation(dir);
             Vector3 spawnPos = transform.position + Vector3.up * 0.5f;
 
-            Projectile projectile = Instantiate(prefab, spawnPos, rotation);
+            // 👉 lấy projectile từ pool thay vì Instantiate
+            Projectile projectile = PoolManager.Instance.GetProjectile(prefab, spawnPos, rotation);
             if (projectile != null)
             {
                 projectile.Init(dir);
             }
+
             yield return new WaitForSeconds(0.2f);
         }
     }
@@ -123,6 +125,7 @@ public class WorldItem : MonoBehaviour
                 Dash();
                 break;
         }
+        SoundMN.Instance.PlayShoot();
         if (!gameObject.activeSelf) return;
         StartCoroutine(StartCooldown());
     }

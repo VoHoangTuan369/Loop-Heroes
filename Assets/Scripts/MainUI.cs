@@ -7,12 +7,16 @@ public class MainUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI waveText, coinText;
     [SerializeField] Slider waveSlider;
     [SerializeField] ResultPanel resultPanel;
+    [SerializeField] Button settingBtn;
+    [SerializeField] SettingPanel settingPanel;
+    [SerializeField] Store storeUI;
 
     private int totalWaves;
 
     private void Start()
     {
         resultPanel.gameObject.SetActive(false);
+        settingBtn.onClick.AddListener(settingPanel.ShowPanel);
     }
     public void InitUI(int totalWaveCount, int startCoin)
     {
@@ -20,6 +24,7 @@ public class MainUI : MonoBehaviour
         UpdateCoinText(startCoin);
         waveText.text = $"Wave {1}/{totalWaves}";
         waveSlider.value = 0;
+        storeUI.gameObject.SetActive(true);
     }
 
     // gọi khi bắt đầu wave mới
@@ -40,9 +45,10 @@ public class MainUI : MonoBehaviour
     {
         coinText.text = coin.ToString();
     }
-    public void ShowResult() 
+    public void ShowResult(bool isWin) 
     {
         resultPanel.gameObject.SetActive(true);
+        resultPanel.ShowResult(isWin);
     }
     public void PrepareNextWaveUI(int nextWaveIndex, int enemyCount)
     {

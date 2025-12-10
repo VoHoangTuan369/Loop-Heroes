@@ -72,13 +72,42 @@ public class Store : MonoBehaviour
 
         ClearStore();
 
-        List<ItemData> allItems = itemDatabase.listItem;
-        for (int i = 0; i < 3; i++)
+        // kiểm tra wave hiện tại
+        if (GameManager.Instance.CurrentWaveIndex == 0) // wave đầu tiên
         {
-            ItemData randomItem = allItems[Random.Range(0, allItems.Count)];
-            StoreItem newItem = Instantiate(itemPrefab, content);
-            newItem.InitData(randomItem);
+            // chỉ spawn 1 item Arrow
+            ItemData arrowItem = itemDatabase.listItem.Find(i => i.type == ItemType.Arrow);
+            if (arrowItem != null)
+            {
+                StoreItem newItem = Instantiate(itemPrefab, content);
+                newItem.InitData(arrowItem);
+            }
+            rerollBtn.gameObject.SetActive(false);
         }
+        else
+        {
+            // random 3 item khác nhau
+            List<ItemData> allItems = new List<ItemData>(itemDatabase.listItem);
+            HashSet<int> usedIndices = new HashSet<int>();
+
+            for (int i = 0; i < 3; i++)
+            {
+                int randIndex;
+                do
+                {
+                    randIndex = Random.Range(0, allItems.Count);
+                } while (usedIndices.Contains(randIndex));
+
+                usedIndices.Add(randIndex);
+
+                ItemData randomItem = allItems[randIndex];
+                StoreItem newItem = Instantiate(itemPrefab, content);
+                newItem.InitData(randomItem);
+            }
+            rerollBtn.gameObject.SetActive(true);
+        }
+
+        // trừ coin khi reroll (trừ lần free đầu tiên)
         if (rerollText.text != "Free")
         {
             GameManager.Instance.CurrentCoin -= priceReroll;

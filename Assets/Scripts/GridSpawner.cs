@@ -5,51 +5,63 @@ public class GridSpawner : MonoBehaviour
 {
     [SerializeField] GameObject quadPrefab;
     [SerializeField] HeroMovement heroPrefab;
-    [SerializeField] int width = 3;
-    [SerializeField] int height = 3;
     [SerializeField] float spacing = 1f;
 
     public List<Vector3> borderPositions = new List<Vector3>();
     public List<WorldItem> worldItems = new List<WorldItem>();
 
+    // HEXAGON 6 CẠNH — CẠNH = 2 — RỖNG
+    int[,] hexMask = new int[,]
+    {
+        {0,1,1,0}, // Row 0 (bottom)
+        {1,0,0,1}, // Row 1
+        {1,0,0,1}, // Row 2
+        {0,1,1,0}, // Row 3 (top)
+    };
+
     void Start()
     {
-        float offsetX = (width - 1) / 2f * spacing;
-        float offsetZ = (height - 1) / 2f * spacing;
+        int size = hexMask.GetLength(0);
+        Vector3[,] grid = new Vector3[size, size];
 
-        // Tạo tất cả ô
-        Vector3[,] grid = new Vector3[width, height];
-        for (int x = 0; x < width; x++)
+        float offset = (size - 1) / 2f * spacing;
+
+        // Tạo ô hexagon dựa theo mask
+        for (int x = 0; x < size; x++)
         {
-            for (int z = 0; z < height; z++)
+            for (int z = 0; z < size; z++)
             {
-                if (x == width / 2 && z == height / 2)
-                    continue;
-
-                Vector3 position = new Vector3(x * spacing - offsetX, 0, z * spacing - offsetZ);
-                grid[x, z] = position;
-
-                Instantiate(quadPrefab, position, Quaternion.identity, transform);
+                if (hexMask[z, x] == 1)
+                {
+                    Vector3 pos = new Vector3(x * spacing - offset, 0, z * spacing - offset);
+                    grid[x, z] = pos;
+                    Instantiate(quadPrefab, pos, Quaternion.identity, transform);
+                }
             }
         }
 
-        // Thêm theo thứ tự viền (chu vi, chiều kim đồng hồ)
-        // Top row (trái -> phải)
-        for (int x = 0; x < width; x++)
-            borderPositions.Add(grid[x, height - 1]);
+        // Lấy border theo chiều kim đồng hồ
+        // TOP row (z = size - 1)
+        for (int x = 0; x < size; x++)
+            if (hexMask[size - 1, x] == 1)
+                borderPositions.Add(grid[x, size - 1]);
 
-        // Right column (trên -> dưới, bỏ góc đã thêm)
-        for (int z = height - 2; z >= 0; z--)
-            borderPositions.Add(grid[width - 1, z]);
+        // RIGHT edge (x = size - 1)
+        for (int z = size - 2; z >= 0; z--)
+            if (hexMask[z, size - 1] == 1)
+                borderPositions.Add(grid[size - 1, z]);
 
-        // Bottom row (phải -> trái, bỏ góc đã thêm)
-        for (int x = width - 2; x >= 0; x--)
-            borderPositions.Add(grid[x, 0]);
+        // BOTTOM row (z = 0)
+        for (int x = size - 2; x >= 0; x--)
+            if (hexMask[0, x] == 1)
+                borderPositions.Add(grid[x, 0]);
 
-        // Left column (dưới -> trên, bỏ góc đã thêm)
-        for (int z = 1; z < height - 1; z++)
-            borderPositions.Add(grid[0, z]);
+        // LEFT edge (x = 0)
+        for (int z = 1; z < size - 1; z++)
+            if (hexMask[z, 0] == 1)
+                borderPositions.Add(grid[0, z]);
 
+        // Spawn Hero tại border đầu tiên
         HeroMovement hero = Instantiate(heroPrefab, borderPositions[0], Quaternion.identity);
         hero.Grid = this;
         GameManager.Instance.HeroMovement = hero;

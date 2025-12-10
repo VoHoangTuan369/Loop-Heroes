@@ -64,6 +64,7 @@ public class HeroMovement : MonoBehaviour
                 item.ActivateItem();
             }
         }
+        SoundMN.Instance.PlayWalk();
     }
     public IEnumerator ApplySpeedBoost(int level)
     {
@@ -98,5 +99,28 @@ public class HeroMovement : MonoBehaviour
         currentIndex = nextIndex;
 
         isDashing = false;
+    }
+    public void ResetHero()
+    {
+        // Dừng tất cả coroutine cũ để tránh chạy song song
+        StopAllCoroutines();
+
+        // Reset tốc độ về mặc định
+        moveSpeed = 2f; // hoặc lưu biến originalSpeed để gán lại
+
+        // Reset trạng thái
+        isDashing = false;
+        currentIndex = 0;
+
+        // Reset vị trí về điểm đầu tiên trong path
+        if (grid != null && grid.borderPositions.Count > 0)
+        {
+            pathPoints = grid.borderPositions;
+            transform.position = pathPoints[0];
+            transform.rotation = Quaternion.identity;
+        }
+
+        // Bắt đầu lại coroutine di chuyển
+        StartCoroutine(MoveAlongPath());
     }
 }

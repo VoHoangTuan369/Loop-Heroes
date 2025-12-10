@@ -7,40 +7,62 @@ public class Enemy : MonoBehaviour, IHealth
     [SerializeField] HealthBarUI healthBarPrefab;
     [SerializeField] float rushSpeedMultiplier = 3f; // tốc độ gấp 3 lần khi rush
     [SerializeField] float rushDistance = 10f;       // chạy nhanh trong 10 đơn vị rồi bình thường
-    private HealthBarUI healthBarInstance;
-
-    private Transform target;
-    private CentralBase baseObj;
-    private bool isAttacking = false;
+    
+    HealthBarUI healthBarInstance;
+    Transform target;
+    CentralBase baseObj;
+    bool isAttacking = false;
     EnemyStat data;
     float maxHealth;
     float currentHealth;
     Animator animator;
+    GameObject model;
 
     public float CurrentHealth => currentHealth;
     public float MaxHealth => maxHealth;
 
-    public void Init(EnemyStat statData, Transform centralBase, Transform canvasTransform)
+    public EnemyStat Data { get => data; set => data = value; }
+
+    public void Init(EnemyStat statData, Transform centralBase, Transform canvasTransform, int edge)
     {
         target = centralBase;
         baseObj = centralBase.GetComponent<CentralBase>();
         SetStats(statData);
+
+        if (model == null) 
+        {
+            model = Instantiate(statData.model, transform);
+            model.transform.localPosition = Vector3.zero;
+        }
 
         if (healthBarPrefab != null && canvasTransform != null)
         {
             healthBarInstance = Instantiate(healthBarPrefab, canvasTransform);
             healthBarInstance.isEnemyHP = true;
             healthBarInstance.Init(this);
+            healthBarInstance.gameObject.SetActive(false);
         }
+
+        // 👉 chỉnh rushDistance theo cạnh spawn
+        if (edge == 2 || edge == 3) // trên hoặc dưới
+            rushDistance *= 2f;     // ví dụ gấp đôi
+        else
+            rushDistance *= 1f;     // giữ nguyên
 
         StartCoroutine(MoveToTarget());
         animator = GetComponentInChildren<Animator>();
+        SoundMN.Instance.PlayEnemySound();
     }
     public void SetStats(EnemyStat statData)
     {
         data = statData;
         maxHealth = data.maxHealth;
         currentHealth = maxHealth;
+    }
+
+    public void AttachHealthBar(HealthBarUI bar)
+    {
+        healthBarInstance = bar;
     }
     IEnumerator MoveToTarget()
     {
@@ -97,16 +119,19 @@ public class Enemy : MonoBehaviour, IHealth
             baseObj.TakeDamage(data.damage);
             if (animator != null)
                 animator.SetBool("IsAttacking", true);
+            SoundMN.Instance.PlayBaseHit();
             yield return new WaitForSeconds(data.attackSpeed);
         }
+        healthBarInstance.gameObject.SetActive(false);
     }
 
     public void TakeDamage(float damage)
     {
         if (currentHealth <= 0) return;
-
+        healthBarInstance.gameObject.SetActive(true);
         currentHealth -= damage;
         currentHealth = Mathf.Max(currentHealth, 0f);
+        SoundMN.Instance.PlayEnemyHit();
 
         if (healthBarInstance != null)
             healthBarInstance.UpdateHealth();
@@ -119,22 +144,25 @@ public class Enemy : MonoBehaviour, IHealth
 
     private void Die()
     {
-        if (healthBarInstance != null)
-            Destroy(healthBarInstance.gameObject);
-
         GameManager.Instance.CurrentCoin += data.price;
         GameManager.Instance.UpdateCoinUI();
+        GameManager.Instance.RemoveEnemy(this);
 
-        Destroy(gameObject);
+        // 👉 trả healthbar về pool
+        if (healthBarInstance != null)
+            PoolManager.Instance.ReturnHealthBar(healthBarInstance);
+
+        // 👉 trả enemy về pool
+        PoolManager.Instance.ReturnEnemy(this);
     }
 
-    private void OnDestroy()
-    {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.RemoveEnemy(this);
-        }
-    }
+    //private void OnDestroy()
+    //{
+    //    if (GameManager.Instance != null)
+    //    {
+    //        GameManager.Instance.RemoveEnemy(this);
+    //    }
+    //}
 
     public Vector3 GetHeadPosition()
     {
@@ -144,4 +172,26 @@ public class Enemy : MonoBehaviour, IHealth
 
         return transform.position + Vector3.up * 2f;
     }
+    public void ResetEnemy()
+    {
+        // reset máu
+        currentHealth = maxHealth;
+        isAttacking = false;
+
+        // reset rushDistance về giá trị gốc
+        rushDistance = 3f; // hoặc lưu giá trị gốc trong một biến khác rồi gán lại
+
+        // reset animator
+        if (animator != null)
+        {
+            animator.SetBool("IsAttacking", false);
+        }
+
+        // reset hướng quay
+        transform.rotation = Quaternion.identity;
+
+        // dừng tất cả coroutine cũ
+        StopAllCoroutines();
+    }
+
 }

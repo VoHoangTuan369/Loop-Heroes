@@ -50,6 +50,7 @@ public class DragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
                 WorldItem obj = Instantiate(itemPrefab, hit.collider.transform.position, Quaternion.identity, hit.collider.transform);
                 obj.Init(itemData);
                 GameManager.Instance.GridSpawner.worldItems.Add(obj);
+                hit.collider.enabled = false;
                 SpendCoin();
                 return;
             }

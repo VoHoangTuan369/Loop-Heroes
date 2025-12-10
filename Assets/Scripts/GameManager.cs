@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,11 +10,12 @@ public class GameManager : MonoBehaviour
     public CentralBase CentralBase { get => centralBase; set => centralBase = value; }
     public int CurrentCoin { get => currentCoin; set => currentCoin = value; }
     public HeroMovement HeroMovement { get => heroMovement; set => heroMovement = value; }
+    public int CurrentWaveIndex { get => currentWaveIndex; set => currentWaveIndex = value; }
+
     public bool IsFighting = false;
 
     [SerializeField] GridSpawner gridSpawner;
     [SerializeField] CentralBase centralBase;
-    [SerializeField] Enemy enemyPrefab;
     [SerializeField] HeroMovement heroMovement;
     [SerializeField] GameObject plane;
     [SerializeField] Canvas canvasOverlay;
@@ -30,24 +32,41 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-    }
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
 
+        Instance = this;
+        //DontDestroyOnLoad(gameObject);
+    }
+    public static int GetLoopedLevelIndex(int levelIndexValue, int totalLevelLength, int startLoopIndex = 10)
+    {
+        // Độ dài của vòng lặp con (ví dụ: 50 - 10 = 40)
+        int loopLength = totalLevelLength - startLoopIndex;
+
+        // Sử dụng Toán tử Tam phân (Ternary Operator) để chọn logic
+        return (levelIndexValue < totalLevelLength)
+            ? levelIndexValue // Vòng lặp ĐẦU TIÊN (0 -> 49)
+            : startLoopIndex + ((levelIndexValue - totalLevelLength) % loopLength); // Các vòng lặp SAU (10 -> 49 -> 10 ...)
+    }
     private void Start()
     {
-        StartCoroutine(StartLevel());
+        StartLevel();
     }
-    IEnumerator StartLevel()
+
+    void StartLevel()
     {
+        level = LevelLoader.SelectedLevel;
         levelData = gameData.ListLevel.Find(l => l.level == level);
-        if (levelData == null) yield break;
+        if (levelData == null)
+        {
+            levelData = gameData.ListLevel[GetLoopedLevelIndex(level, gameData.ListLevel.Count, 5)];
+        }
 
         currentCoin = levelData.coinStart;
         mainUI.InitUI(levelData.listWave.Count, currentCoin);
-
-        // 👉 mở Store đầu tiên
-        storeUI.gameObject.SetActive(true);
     }
 
     public IEnumerator SpawnWave(Wave wave, int waveIndex)
@@ -71,7 +90,11 @@ public class GameManager : MonoBehaviour
         if (currentWaveIndex >= levelData.listWave.Count)
         {
             Debug.Log("Level hoàn thành!");
-            mainUI.ShowResult();
+            mainUI.ShowResult(true);
+
+            level++;
+            PlayerPrefs.SetInt("CurrentLevel", level);
+            PlayerPrefs.Save();
         }
         else
         {
@@ -84,7 +107,7 @@ public class GameManager : MonoBehaviour
     public void StartNextWave()
     {
         if (levelData == null) return;
-        StartCoroutine(SpawnWave(levelData.listWave[currentWaveIndex], currentWaveIndex)); 
+        StartCoroutine(SpawnWave(levelData.listWave[currentWaveIndex], currentWaveIndex));
         currentWaveIndex++;
     }
 
@@ -100,6 +123,7 @@ public class GameManager : MonoBehaviour
 
         // chọn vị trí spawn ngẫu nhiên ở cạnh plane
         Renderer planeRenderer = plane.GetComponent<Renderer>();
+        if (planeRenderer == null) return;
         Bounds bounds = planeRenderer.bounds;
         Vector3 spawnPos = Vector3.zero;
         int edge = Random.Range(0, 4);
@@ -111,16 +135,12 @@ public class GameManager : MonoBehaviour
             case 3: spawnPos = new Vector3(Random.Range(bounds.min.x, bounds.max.x), bounds.center.y, bounds.max.z); break;
         }
 
-        // tạo enemy
-        Enemy enemy = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+        // 👉 lấy Enemy từ Pool thay vì Instantiate
+        Enemy enemy = PoolManager.Instance.GetEnemy(type, spawnPos, Quaternion.identity, canvasOverlay.transform);
+        enemy.ResetEnemy();
+        // reset stat và init
         EnemyStat statData = new EnemyStat(stat);
-        // gắn model từ EnemyStat
-        if (statData.model != null)
-        {
-            GameObject model = Instantiate(statData.model, enemy.transform);
-            model.transform.localPosition = Vector3.zero;
-        }
-        enemy.Init(statData, centralBase.transform, canvasOverlay.transform);
+        enemy.Init(statData, centralBase.transform, canvasOverlay.transform, edge);
 
         enemies.Add(enemy);
     }
@@ -141,6 +161,10 @@ public class GameManager : MonoBehaviour
     }
     public void ShowResult(bool isWin) 
     {
-        mainUI.ShowResult();
+        mainUI.ShowResult(isWin);
+    }
+    public void RestartGame()
+    {
+        SceneManager.LoadScene("GameScene");
     }
 }

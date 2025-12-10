@@ -4,23 +4,37 @@ using System.Collections.Generic;
 
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] float speed;
-    [SerializeField] float damage;
+    [SerializeField] float speed = 10f;
+    [SerializeField] float damage = 10f;
+    [SerializeField] float lifeTime = 3f; // thời gian tồn tại
+
     private Vector3 moveDirection;   // hướng bay cố định
-
-    // lưu các enemy đã trúng
     private HashSet<Enemy> hitEnemies = new HashSet<Enemy>();
+    TrailRenderer trail;
 
+    private void Awake()
+    {
+        trail = GetComponentInChildren<TrailRenderer>();
+    }
     public void Init(Vector3 direction)
     {
         moveDirection = direction.normalized;
+        hitEnemies.Clear(); // reset danh sách enemy đã trúng
+        StopAllCoroutines(); // dừng coroutine cũ nếu có
         StartCoroutine(MoveStraight());
-        Destroy(gameObject, 3f); // tự hủy sau 3 giây
+        StartCoroutine(ReturnToPoolAfterTime()); // coroutine tự trả về pool
+
+        // reset trail mỗi lần bắn
+        if (trail != null)
+        {
+            trail.Clear();
+            trail.emitting = true;
+        }
     }
 
     IEnumerator MoveStraight()
     {
-        while (true)
+        while (gameObject.activeInHierarchy)
         {
             transform.position += moveDirection * speed * Time.deltaTime;
 
@@ -31,6 +45,12 @@ public class Projectile : MonoBehaviour
 
             yield return null;
         }
+    }
+
+    IEnumerator ReturnToPoolAfterTime()
+    {
+        yield return new WaitForSeconds(lifeTime);
+        PoolManager.Instance.ReturnProjectile(this);
     }
 
     private void OnTriggerEnter(Collider other)

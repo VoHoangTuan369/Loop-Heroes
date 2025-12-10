@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 1, b: 0.07326603, a: 0.39215687}
+  m_Color: {r: 1, g: 0, b: 0.042412758, a: 0.39215687}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -313,7 +313,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5860366249695567630}
@@ -347,8 +347,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 1082751905005453409}
     m_Modifications:
     - target: {fileID: 1149146374294638241, guid: 442c7bb86252d3949b61e334ff3be019, type: 3}
+      propertyPath: m_margin.z
+      value: 0.024672925
+      objectReference: {fileID: 0}
+    - target: {fileID: 1149146374294638241, guid: 442c7bb86252d3949b61e334ff3be019, type: 3}
       propertyPath: m_fontStyle
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1149146374294638241, guid: 442c7bb86252d3949b61e334ff3be019, type: 3}
+      propertyPath: m_wordSpacing
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1149146374294638241, guid: 442c7bb86252d3949b61e334ff3be019, type: 3}
+      propertyPath: m_paragraphSpacing
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2958559334266200682, guid: 442c7bb86252d3949b61e334ff3be019, type: 3}
       propertyPath: m_Pivot.x

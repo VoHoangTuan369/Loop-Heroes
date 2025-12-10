@@ -37,3 +37,91 @@ MonoBehaviour:
     maxHealth: 8
     model: {fileID: 119662, guid: a5dadc47e554b324a87386cea088486c, type: 3}
     price: 2
+  - type: 6
+    speed: 1.2
+    damage: 2
+    attackRange: 1.2
+    attackSpeed: 1.4
+    maxHealth: 12
+    model: {fileID: 166564, guid: c54f52a5df45af949803688189314bd8, type: 3}
+    price: 6
+  - type: 7
+    speed: 1.2
+    damage: 2.5
+    attackRange: 1.3
+    attackSpeed: 1.4
+    maxHealth: 16
+    model: {fileID: 108946, guid: 1ce7604532dbce04e812a36937c3b5d4, type: 3}
+    price: 7
+  - type: 8
+    speed: 1.5
+    damage: 2.5
+    attackRange: 1.4
+    attackSpeed: 1.4
+    maxHealth: 16
+    model: {fileID: 130740, guid: 2aa63e14c2c606747827a38f3619c5c6, type: 3}
+    price: 8
+  - type: 9
+    speed: 1.2
+    damage: 3
+    attackRange: 1.3
+    attackSpeed: 1.4
+    maxHealth: 21
+    model: {fileID: 136402, guid: a4fbee618f7e9d047adb5b681ecc0441, type: 3}
+    price: 10
+  - type: 3
+    speed: 1
+    damage: 1.5
+    attackRange: 1
+    attackSpeed: 1.4
+    maxHealth: 12
+    model: {fileID: 146448, guid: dc1fc76610eebf640999c1900c654825, type: 3}
+    price: 4
+  - type: 4
+    speed: 1
+    damage: 1.5
+    attackRange: 1
+    attackSpeed: 1.4
+    maxHealth: 13
+    model: {fileID: 123140, guid: 57970e1e7f602eb4eb914aedf228d196, type: 3}
+    price: 4
+  - type: 5
+    speed: 1.2
+    damage: 1.5
+    attackRange: 1
+    attackSpeed: 1.4
+    maxHealth: 16
+    model: {fileID: 117270, guid: 634130a0b5997d14da4e9e1b1ef75f6a, type: 3}
+    price: 5
+  - type: 10
+    speed: 1.7
+    damage: 1.5
+    attackRange: 1
+    attackSpeed: 1.4
+    maxHealth: 11
+    model: {fileID: 198234, guid: e19af22b368abd042a86d90dd69d45f5, type: 3}
+    price: 7
+  - type: 11
+    speed: 1.7
+    damage: 1.5
+    attackRange: 1
+    attackSpeed: 1.4
+    maxHealth: 12
+    model: {fileID: 171800, guid: 22e71aa69abfb734994b47e1d651d410, type: 3}
+    price: 7
+  - type: 12
+    speed: 1.2
+    damage: 2.5
+    attackRange: 1.1
+    attackSpeed: 1.4
+    maxHealth: 31
+    model: {fileID: 185554, guid: 377104e47bea14d419691f39b4dbfa58, type: 3}
+    price: 12
+  - type: 13
+    speed: 1.2
+    damage: 2.5
+    attackRange: 1.1
+    attackSpeed: 1.4
+    maxHealth: 36
+    model: {fileID: 142606, guid: f9b32b5d38f32394496bb8a5cb504b31, type: 3}
+    price: 14
