@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
+using DG.Tweening;
 
 public class Store : MonoBehaviour
 {
@@ -10,9 +11,13 @@ public class Store : MonoBehaviour
     [SerializeField] Button rerollBtn, fightBtn;
     [SerializeField] ItemDataSO itemDatabase;
     [SerializeField] TextMeshProUGUI rerollText;
+    [SerializeField] Transform newPosCam;
 
-    private Vector3 originalCamPos;   // lưu vị trí gốc của camera
+    private Vector3 originalCamPos;       // lưu vị trí gốc của camera
+    private Quaternion originalCamRot;    // lưu rotation gốc của camera
     private Camera mainCam;
+    Vector3 originalPos;
+
     bool hasRerolled = false;
     int priceReroll = 2;
 
@@ -20,28 +25,39 @@ public class Store : MonoBehaviour
     {
         mainCam = Camera.main;
         if (mainCam != null)
+        {
             originalCamPos = mainCam.transform.position;
+            originalCamRot = mainCam.transform.rotation;
+        }
+        originalPos = transform.localPosition;
     }
 
     private void OnEnable()
     {
         if (mainCam != null)
         {
-            Vector3 newPos = originalCamPos;
-            newPos.y = 2f;
-            mainCam.transform.position = newPos;
-            GameManager.Instance.CentralBase.UpdateHpPos();
+            mainCam.transform.position = originalCamPos;
+            mainCam.transform.rotation = originalCamRot;
+
+            if (GameManager.Instance.CentralBase != null)
+                GameManager.Instance.CentralBase.UpdateHpPos();
         }
+
         hasRerolled = false;
         RerollItems();
+
+        transform.localPosition = new Vector3(originalPos.x, -Screen.height, originalPos.z); // bắt đầu từ dưới màn hình
+        transform.DOLocalMoveY(originalPos.y, 0.5f).SetEase(Ease.OutBack);
     }
+
 
     private void OnDisable()
     {
-        if (mainCam != null)
+        if (mainCam != null && newPosCam != null)
         {
-            mainCam.transform.position = originalCamPos;
-            if(GameManager.Instance.CentralBase != null)
+            mainCam.transform.position = newPosCam.position;
+            mainCam.transform.rotation = newPosCam.rotation;
+            if (GameManager.Instance.CentralBase != null)
                 GameManager.Instance.CentralBase.UpdateHpPos();
         }
     }
@@ -54,8 +70,12 @@ public class Store : MonoBehaviour
 
     private void OnFightClicked()
     {
-        gameObject.SetActive(false);
-        GameManager.Instance.StartNextWave();
+        // Hiệu ứng chạy xuống rồi disable
+        transform.DOLocalMoveY(-Screen.height, 0.5f).SetEase(Ease.InBack).OnComplete(() =>
+        {
+            gameObject.SetActive(false);
+            GameManager.Instance.StartNextWave();
+        });
     }
 
     void ClearStore()

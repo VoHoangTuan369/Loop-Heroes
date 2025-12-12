@@ -98,7 +98,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 800, y: 400}
+  m_SizeDelta: {x: 800, y: 355}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &7392213242724112306
 MonoBehaviour:
@@ -120,7 +120,7 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_Spacing: 0
   m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 1
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
@@ -165,7 +165,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1000, y: 500}
+  m_SizeDelta: {x: 800.6125, y: 433.5375}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &2462932647940944272
 CanvasRenderer:
@@ -223,6 +223,7 @@ MonoBehaviour:
   fightBtn: {fileID: 9024327719848471950}
   itemDatabase: {fileID: 11400000, guid: 3c444954f54a2b54abf7843009a7fa84, type: 2}
   rerollText: {fileID: 2780543363868102623}
+  newPosCam: {fileID: 0}
 --- !u!1 &5823306926373960191
 GameObject:
   m_ObjectHideFlags: 0

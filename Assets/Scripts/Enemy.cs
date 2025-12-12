@@ -22,7 +22,6 @@ public class Enemy : MonoBehaviour, IHealth
     public float MaxHealth => maxHealth;
 
     public EnemyStat Data { get => data; set => data = value; }
-
     public void Init(EnemyStat statData, Transform centralBase, Transform canvasTransform, int edge)
     {
         target = centralBase;
@@ -136,6 +135,8 @@ public class Enemy : MonoBehaviour, IHealth
         if (healthBarInstance != null)
             healthBarInstance.UpdateHealth();
 
+        if (CameraShake.Instance != null)
+            StartCoroutine(CameraShake.Instance.Shake(0.15f, 0.1f));
         if (currentHealth == 0f)
         {
             Die();
@@ -155,14 +156,6 @@ public class Enemy : MonoBehaviour, IHealth
         // 👉 trả enemy về pool
         PoolManager.Instance.ReturnEnemy(this);
     }
-
-    //private void OnDestroy()
-    //{
-    //    if (GameManager.Instance != null)
-    //    {
-    //        GameManager.Instance.RemoveEnemy(this);
-    //    }
-    //}
 
     public Vector3 GetHeadPosition()
     {
@@ -193,5 +186,4 @@ public class Enemy : MonoBehaviour, IHealth
         // dừng tất cả coroutine cũ
         StopAllCoroutines();
     }
-
 }

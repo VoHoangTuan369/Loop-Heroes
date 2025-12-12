@@ -21,7 +21,10 @@ public class HeroMovement : MonoBehaviour
         // Bắt đầu Coroutine di chuyển liên tục
         StartCoroutine(MoveAlongPath());
     }
-
+    public void SetSpeed(float speed)
+    {
+        moveSpeed = speed;
+    }
     IEnumerator MoveAlongPath()
     {
         while (true)

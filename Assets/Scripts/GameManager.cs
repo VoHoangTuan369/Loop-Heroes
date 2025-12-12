@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public int CurrentCoin { get => currentCoin; set => currentCoin = value; }
     public HeroMovement HeroMovement { get => heroMovement; set => heroMovement = value; }
     public int CurrentWaveIndex { get => currentWaveIndex; set => currentWaveIndex = value; }
+    public Hero Hero { get => hero; set => hero = value; }
 
     public bool IsFighting = false;
 
@@ -28,6 +29,7 @@ public class GameManager : MonoBehaviour
     int killedCount = 0;
     int currentWaveIndex = 0;
     LevelDataSO levelData;
+    Hero hero;
     public List<Enemy> enemies = new List<Enemy>();
 
     private void Awake()
@@ -74,6 +76,7 @@ public class GameManager : MonoBehaviour
         killedCount = 0;
         IsFighting = true;
         mainUI.StartWave(waveIndex, wave.listEnemy.Count);
+        Hero.UpgradeHero(waveIndex + 1);
 
         foreach (EnemyType type in wave.listEnemy)
         {
@@ -162,6 +165,7 @@ public class GameManager : MonoBehaviour
     public void ShowResult(bool isWin) 
     {
         mainUI.ShowResult(isWin);
+        IsFighting = false;
     }
     public void RestartGame()
     {

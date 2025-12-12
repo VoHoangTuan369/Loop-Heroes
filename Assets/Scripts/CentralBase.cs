@@ -25,7 +25,6 @@ public class CentralBase : MonoBehaviour, IHealth
 
         currentHealth = Mathf.Max(currentHealth - damage, 0f);
         healthBar.UpdateHealth();
-
         if (currentHealth == 0f)
         {
             Die();

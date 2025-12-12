@@ -415,6 +415,8 @@ MonoBehaviour:
   resultPanel: {fileID: 0}
   settingBtn: {fileID: 4827825580295955488}
   settingPanel: {fileID: 0}
+  storeUI: {fileID: 0}
+  hitImg: {fileID: 0}
 --- !u!1 &4256622441872329135
 GameObject:
   m_ObjectHideFlags: 0

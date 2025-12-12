@@ -22,7 +22,7 @@ public class WorldItem : MonoBehaviour
         itemData = data;
         level = Mathf.Max(level, 1);
         quadRenderer.material.mainTexture = itemData.icon.texture;
-        levelText.text = $"Lv{level}";
+        levelText.text = $"x{level}";
         cooldown.fillAmount = 0f;
     }
 
@@ -133,7 +133,12 @@ public class WorldItem : MonoBehaviour
     {
         if (level == itemData.maxLevel) return;
         level++;
-        levelText.text = $"Lv{level}";
+        if (level == itemData.maxLevel) 
+        {
+            levelText.text = $"max";
+            return;
+        }
+        levelText.text = $"x{level}";
     }
     private IEnumerator StartCooldown()
     {
